@@ -2,6 +2,7 @@
 
 namespace Sunnysideup\Dashboard\Components;
 
+use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\ORM\ArrayList;
 use SilverStripe\View\ArrayData;
 use SilverStripe\View\ViewableData;
@@ -60,7 +61,7 @@ class DashboardChart extends ViewableData
      */
     public static function create(...$args)
     {
-        list($title, $x_label, $y_label, $chartData) = $args;
+        [$title, $x_label, $y_label, $chartData] = $args;
 
         if ($chartData === null) {
             $chartData = [];
@@ -150,7 +151,7 @@ class DashboardChart extends ViewableData
     /**
      * Renders the chart and loads the dependencies
      *
-     * @return \SilverStripe\ORM\FieldType\DBHTMLText
+     * @return DBHTMLText
      */
     public function forTemplate()
     {

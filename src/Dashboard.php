@@ -2,6 +2,8 @@
 
 namespace Sunnysideup\Dashboard;
 
+use SilverStripe\Control\HTTPResponse_Exception;
+use SilverStripe\ORM\ValidationException;
 use SilverStripe\Admin\LeftAndMain;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
@@ -99,8 +101,8 @@ class Dashboard extends LeftAndMain implements PermissionProvider
      * Can be a new record or existing
      *
      * @return HTTPResponse
-     * @throws \SilverStripe\Control\HTTPResponse_Exception
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws HTTPResponse_Exception
+     * @throws ValidationException
      */
     public function handlePanel(HTTPRequest $r)
     {
@@ -140,7 +142,7 @@ class Dashboard extends LeftAndMain implements PermissionProvider
     /**
      * A controller action that handles the reordering of the panels
      *
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws ValidationException
      */
     public function sort(HTTPRequest $r)
     {
@@ -162,7 +164,7 @@ class Dashboard extends LeftAndMain implements PermissionProvider
      *
      * @param  HTTPRequest The current request
      * @return HTTPResponse
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws ValidationException
      */
     public function setdefault(HTTPRequest $r)
     {
@@ -178,7 +180,7 @@ class Dashboard extends LeftAndMain implements PermissionProvider
             $clone->write();
         }
 
-        return new HTTPResponse(_t(
+        return HTTPResponse::create(_t(
             'Dashboard.SETASDEFAULTSUCCESS',
             'Success! This dashboard configuration has been set as the default for all new members.'
         ));
@@ -189,7 +191,7 @@ class Dashboard extends LeftAndMain implements PermissionProvider
      *
      * @param  HTTPRequest The current request
      * @return HTTPResponse
-     * @throws \SilverStripe\ORM\ValidationException
+     * @throws ValidationException
      */
     public function applytoall(HTTPRequest $r)
     {
@@ -211,7 +213,7 @@ class Dashboard extends LeftAndMain implements PermissionProvider
             }
         }
 
-        return new HTTPResponse(_t(
+        return HTTPResponse::create(_t(
             'Dashboard.APPLYTOALLSUCCESS',
             'Success! This dashboard configuration has been applied to all members who have dashboard access.'
         ));
@@ -268,7 +270,7 @@ class Dashboard extends LeftAndMain implements PermissionProvider
             }
         }
 
-        return $set->sort('Priority');
+        return $set->sort(['Priority' => 'ASC']);
     }
 
     /**

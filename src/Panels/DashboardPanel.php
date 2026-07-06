@@ -161,7 +161,7 @@ class DashboardPanel extends DataObject
     public function getLink($action = null)
     {
         return Controller::join_links(
-            $this->getDashboard()->Link("panel/{$this->ID}"),
+            $this->getDashboard()->Link('panel/' . $this->ID),
             $action
         );
     }
@@ -279,19 +279,19 @@ class DashboardPanel extends DataObject
 
     public function canDelete($member = null)
     {
-        $m = $member ? $member : Security::getCurrentUser();
+        $m = $member ?: Security::getCurrentUser();
         return Permission::check('CMS_ACCESS_DashboardDeletePanels') && $this->MemberID == $m->ID;
     }
 
     public function canEdit($member = null)
     {
-        $m = $member ? $member : Security::getCurrentUser();
+        $m = $member ?: Security::getCurrentUser();
         return Permission::check('CMS_ACCESS_DashboardConfigurePanels') && $this->MemberID == $m->ID;
     }
 
     public function canView($member = null)
     {
-        $m = $member ? $member : Security::getCurrentUser();
+        $m = $member ?: Security::getCurrentUser();
         return Permission::check('CMS_ACCESS_Dashboard') && $this->MemberID == $m->ID;
     }
 }
