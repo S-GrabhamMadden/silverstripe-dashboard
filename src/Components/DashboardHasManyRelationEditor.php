@@ -2,17 +2,17 @@
 
 namespace Sunnysideup\Dashboard\Components;
 
-use SilverStripe\ORM\DataList;
-use SilverStripe\ORM\ArrayList;
-use SilverStripe\View\ArrayData;
-use SilverStripe\Forms\FormField;
 use SilverStripe\Control\Controller;
-use SilverStripe\Core\Config\Config;
 use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Control\HTTPResponse;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
-use Sunnysideup\Dashboard\Panels\DashboardPanel;
+use SilverStripe\Forms\FormField;
+use SilverStripe\ORM\ArrayList;
+use SilverStripe\ORM\DataList;
+use SilverStripe\View\ArrayData;
 use Sunnysideup\Dashboard\DashboardPanelDataObject;
+use Sunnysideup\Dashboard\Panels\DashboardPanel;
 
 /**
  * A custom FormField object used to manage has_many relations to a DashboardPanel.
@@ -25,12 +25,12 @@ use Sunnysideup\Dashboard\DashboardPanelDataObject;
 class DashboardHasManyRelationEditor extends FormField
 {
     private static $allowed_actions = [
- 	   "handleItem"
+        'handleItem',
     ];
 
     private static $url_handlers = [
-		'item/$ID' => 'handleItem',
-		'$Action!' => '$Action',
+        'item/$ID' => 'handleItem',
+        '$Action!' => '$Action',
     ];
 
     /**
@@ -72,16 +72,16 @@ class DashboardHasManyRelationEditor extends FormField
         $this->relationClass = $relationClass;
         $this->title = $title;
 
-        if (!$this->controller instanceof DashboardPanel) {
-            user_error("DashboardHasManyRelationEditor must be passed an instance of DashboardPanel", E_USER_ERROR);
+        if (! $this->controller instanceof DashboardPanel) {
+            user_error('DashboardHasManyRelationEditor must be passed an instance of DashboardPanel', E_USER_ERROR);
         }
 
-        if (!isset($this->controller->hasMany()[$this->relationName])) {
+        if (! isset($this->controller->hasMany()[$this->relationName])) {
             user_error("DashboardHasManyRelationEditor must be passed a valid has_many relation for the panel. $relationName is not in the has_many array.", E_USER_ERROR);
         }
 
-        if (!is_subclass_of($relationClass, DashboardPanelDataObject::class)) {
-            user_error("DashbordHasManyRelationEditor can only manage subclasses of DashboardPanelDataObject", E_USER_ERROR);
+        if (! is_subclass_of($relationClass, DashboardPanelDataObject::class)) {
+            user_error('DashbordHasManyRelationEditor can only manage subclasses of DashboardPanelDataObject', E_USER_ERROR);
         }
 
         $this->records = $this->controller->$relationName();
@@ -91,26 +91,24 @@ class DashboardHasManyRelationEditor extends FormField
 
     /**
      * Gets all of the items in the relation and provides edit/delete links for the table
-     *
-     * @return ArrayList
      */
     public function getItems(): ArrayList
     {
         $items = ArrayList::create();
-        $labelField = Config::inst()->get($this->relationClass, "label_field");
+        $labelField = Config::inst()->get($this->relationClass, 'label_field');
 
         foreach ($this->records as $record) {
             $items->push(
                 ArrayData::create([
-					'Label' => $record->$labelField,
-					'DeleteLink' => Controller::join_links(
-                        $this->Link("item"),
+                    'Label' => $record->$labelField,
+                    'DeleteLink' => Controller::join_links(
+                        $this->Link('item'),
                         $record->ID,
-                        "delete"
+                        'delete'
                     ),
-					'EditLink' => $this->Link("item/{$record->ID}"),
-					'ID' => $record->ID
-				])
+                    'EditLink' => $this->Link("item/{$record->ID}"),
+                    'ID' => $record->ID,
+                ])
             );
         }
 
@@ -126,13 +124,12 @@ class DashboardHasManyRelationEditor extends FormField
      */
     public function handleItem(HTTPRequest $r)
     {
-        if($r->param('ID') == "new") {
+        if ($r->param('ID') == 'new') {
             $item = Injector::inst()->create($this->relationClass);
-        }
-        else {
+        } else {
             $item = DataList::create($this->relationClass)->byID((int) $r->param('ID'));
         }
-        if($item) {
+        if ($item) {
             $handler = DashboardHasManyRelationEditorItemRequest::create($this->controller->getDashboard(), $this->controller, $this, $item);
             return $handler->handleRequest($r);
         }
@@ -167,7 +164,8 @@ class DashboardHasManyRelationEditor extends FormField
                 }
             }
 
-            return new HTTPResponse("OK");
+            return new HTTPResponse('OK');
         }
+        return null;
     }
 }
